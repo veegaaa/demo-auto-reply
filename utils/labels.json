@@ -1,0 +1,61 @@
+{
+  "0": {
+    "label_name": "other",
+    "label_name_dropdown_menu": "dp_topic_other",
+    "threshold": 0,
+    "dp_topic_flg_autoreply_sent": false
+  },
+  "1": {
+    "label_name": "rejects",
+    "label_name_dropdown_menu": "dp_topic_rejects",
+    "threshold": 0.6841810449,
+    "dp_topic_flg_autoreply_sent": true,
+    "ab_test_config": {
+      "salt": "salt_1",
+      "hash_divisor": 100,
+      "groups": [
+          {
+              "name": "dp_abgroup_control",
+              "hash_rem_lower_bound": null,
+              "hash_rem_upper_bound": null
+          },
+          {
+              "name": "dp_abgroup_test",
+              "hash_rem_lower_bound": 0,
+              "hash_rem_upper_bound": 99
+          }
+      ]
+    }
+  },
+  "2": {
+    "same_topic_in_last_period_config": {
+        "topics_list_raw": [
+            "order__return_or_cancellation",
+            "order__not_received",
+            "order__damaged_or_incomplete"
+        ],
+        "field_id_same_topic_in_period": 8761641609489,
+        "same_topic_threshold_days": 14
+    },
+    "label_name": "orders",
+    "label_name_dropdown_menu": "dp_topic_orders",
+    "threshold": 0.7126207286,
+    "dp_topic_flg_autoreply_sent": true,
+    "ab_test_config": {
+      "salt": "salt_1",
+      "hash_divisor": 100,
+      "groups": [
+          {
+              "name": "dp_abgroup_control",
+              "hash_rem_lower_bound": 0,
+              "hash_rem_upper_bound": 49
+          },
+          {
+              "name": "dp_abgroup_test",
+              "hash_rem_lower_bound": 50,
+              "hash_rem_upper_bound": 99
+          }
+      ]
+    }
+  }
+}

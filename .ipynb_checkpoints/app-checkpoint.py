@@ -13,6 +13,18 @@ from params import days_of_week_dict
 from params import goals
 from params import time_amount_dict
 
+
+from sklearn.pipeline import Pipeline
+
+from utils import data_preproc
+from utils.dediac import dediac_ar
+import numpy as np
+import pandas as pd
+import json
+from typing import Dict, Optional
+import joblib
+
+
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = 'randomstring'
@@ -23,6 +35,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
+with open('utils/labels.json') as json_file:
+    labels_d = json.load(json_file)
+    labels_d = {int(k): v for k, v in labels_d.items()}
+
+PROD_MODEL_PATH = 'production_models/mvp_model_pipeline_v2.pkl'
+model_pipe = joblib.load(PROD_MODEL_PATH)
 
 class Tutor(db.Model):
     __tablename__ = "tutors"
@@ -89,6 +108,41 @@ class ApplySelectionForm(FlaskForm):
 
 ######################################
 
+
+def mvp_preprocessing(text: str) -> str:
+    """just a simple preprocessing"""
+    return dediac_ar(' '.join(''.join([c if c.isalpha() else ' ' for c in text.lower()]).split()))
+
+
+def make_prediction(model_pipe: Pipeline, comment_history: str) -> Dict:
+    """Predicts class based on comments history string"""
+    comment_history = mvp_preprocessing(comment_history)
+    text_vectorized = model_pipe['tfidfvectorizer'].transform([comment_history])
+    preds = model_pipe['logisticregression'].predict_proba(text_vectorized).flatten()
+
+    pred_argmax = int(np.argmax(preds))
+    pred_max = preds[pred_argmax]
+
+    if pred_max > labels_d[pred_argmax]['threshold']:
+        pred_cls, pred_proba = labels_d[pred_argmax]['label_name'], pred_max
+        pred_proba_dropdown = labels_d[pred_argmax]['label_name_dropdown_menu']
+        flg_send_autoreply = labels_d[pred_argmax]['dp_topic_flg_autoreply_sent']
+    else:
+        # TODO: make this more stable (what if OTHER changes its index?)
+        pred_cls, pred_proba = 'other', preds[0]
+        pred_proba_dropdown = 'dp_topic_other'
+        flg_send_autoreply = False
+    # cls_counter.labels(pred_cls=pred_cls).inc()
+
+    return {
+        'pred_argmax': pred_argmax,
+        'predicted_class': pred_cls,
+        'predicted_probability': pred_proba,
+        'predicted_class_dropdown': pred_proba_dropdown,
+        'flg_send_autoreply': flg_send_autoreply
+    }
+
+
 @app.route("/", methods=['GET','POST'])
 def template_request():
     application_form = ApplySelectionForm()
@@ -97,8 +151,12 @@ def template_request():
                            **params)
     else:
         last_comment_req=application_form.comment_txt.data
-        class_name = 'class_name'
-        proba = 'proba'
+        # class_name = 'class_name'
+        # proba = 'proba'
+        pred_dict = make_prediction(model_pipe, last_comment_req)
+        class_name = pred_dict['predicted_class']
+        proba = pred_dict['predicted_probability']
+        print(pred_dict)
         return render_template("request.html", 
                                application_form=application_form,
                                last_comment_req=str(application_form.comment_txt.data),
