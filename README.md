@@ -1,5 +1,5 @@
 # Simple Flask application
+This app is about searching for tutors and booking lessons with them.
 ## Deployment
-This app is deployed with Heroku.
+The app is deployed with Heroku.
 
-The app can be found at https://flask-travel-app.herokuapp.com/

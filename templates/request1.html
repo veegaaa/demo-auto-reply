@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+  <main class="container mt-5">
+    <div class="col-12 col-sm-10 col-lg-6 offset-lg-3 offset-sm-1">
+      <form action="{{ url_for('template_request') }}" class="card mb-5", method="POST">
+        <div class="card-body text-center pt-5">
+          <h1 class="h3 card-title mt-4 mb-2">I'll guess the topic of your comment</h1>
+          <p class="px-5">Rejects, Orders or something else.</p>
+        </div>goal
+        <hr>
+        <div class="card-body mx-3">
+            <p><b>Last comment requested:</b> {{ last_comment_req }}</p>
+            <p><b>Predicted class:</b> {{ class_name }}</p>
+            <p><b>Predicted probability:</b>{{ proba }}</p>
+        </div>
+        <hr>
+        <div class="card-body mx-3">
+          {{ application_form.comment_txt.label(class="mb-1 mt-2") }} {{ application_form.comment_txt(class="form-control", type="tel", id="commentTxt") }}
+          {{ application_form.submit(class="btn btn-primary btn-block mt-4", value="Submit") }}
+        </div>
+      </form>
+    </div>
+  </main>
+
+{% endblock %}
