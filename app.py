@@ -1,11 +1,11 @@
 from flask import Flask, url_for, request
 from flask import render_template
 import json
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField
-from wtforms.validators import InputRequired
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_wtf import FlaskForm
+# from wtforms import StringField, SubmitField, RadioField
+# from wtforms.validators import InputRequired
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_migrate import Migrate
 
 
 from params import params
@@ -26,12 +26,12 @@ import joblib
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = 'randomstring'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tutors.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tutors.db'
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# db = SQLAlchemy(app)
+# migrate = Migrate(app, db)
 
 
 with open('utils/labels.json') as json_file:
@@ -41,68 +41,68 @@ with open('utils/labels.json') as json_file:
 PROD_MODEL_PATH = 'production_models/mvp_model_pipeline_v2.pkl'
 model_pipe = joblib.load(PROD_MODEL_PATH)
 
-class Tutor(db.Model):
-    __tablename__ = "tutors"
+# class Tutor(db.Model):
+#     __tablename__ = "tutors"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    about = db.Column(db.String(255*4), nullable=False)
-    rating = db.Column(db.Float)
-    picture = db.Column(db.String(255), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    free = db.Column(db.JSON)
-    goals = db.Column(db.JSON)
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(50), nullable=False)
+#     about = db.Column(db.String(255*4), nullable=False)
+#     rating = db.Column(db.Float)
+#     picture = db.Column(db.String(255), nullable=False)
+#     price = db.Column(db.Integer, nullable=False)
+#     free = db.Column(db.JSON)
+#     goals = db.Column(db.JSON)
 
-    booking = db.relationship("Booking", back_populates="tutor")
-
-
-class Booking(db.Model):
-    __tablename__ = "bookings"
-
-    id = db.Column(db.Integer, primary_key=True)
-    student_name = db.Column(db.String(50), nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
-    day_of_week = db.Column(db.String(10))
-    time = db.Column(db.String(10))
-
-    tutor = db.relationship("Tutor", back_populates="booking")
-    tutor_id = db.Column(db.Integer, db.ForeignKey('tutors.id'))
+#     booking = db.relationship("Booking", back_populates="tutor")
 
 
-class Application(db.Model):
-    __tablename__ = "applications"
+# class Booking(db.Model):
+#     __tablename__ = "bookings"
 
-    id = db.Column(db.Integer, primary_key=True)
-    student_name = db.Column(db.String(50))
-    phone_number = db.Column(db.String(20))
-    time_amount = db.Column(db.String(20)),
-    goal = db.Column(db.String(20)),
+#     id = db.Column(db.Integer, primary_key=True)
+#     student_name = db.Column(db.String(50), nullable=False)
+#     phone_number = db.Column(db.String(20), nullable=False)
+#     day_of_week = db.Column(db.String(10))
+#     time = db.Column(db.String(10))
+
+#     tutor = db.relationship("Tutor", back_populates="booking")
+#     tutor_id = db.Column(db.Integer, db.ForeignKey('tutors.id'))
+
+
+# class Application(db.Model):
+#     __tablename__ = "applications"
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     student_name = db.Column(db.String(50))
+#     phone_number = db.Column(db.String(20))
+#     time_amount = db.Column(db.String(20)),
+#     goal = db.Column(db.String(20)),
 
 
 ######################################
 
-def get_tutor_dict(tutor):
-    return {
-        'id': tutor.id,
-        'name': tutor.name,
-        'about': tutor.about,
-        'rating': tutor.rating,
-        'price': tutor.price,
-        'picture': tutor.picture,
-        'goals': tutor.goals,
-        'free': tutor.free,
-    }
-######################################
+# def get_tutor_dict(tutor):
+#     return {
+#         'id': tutor.id,
+#         'name': tutor.name,
+#         'about': tutor.about,
+#         'rating': tutor.rating,
+#         'price': tutor.price,
+#         'picture': tutor.picture,
+#         'goals': tutor.goals,
+#         'free': tutor.free,
+#     }
+# ######################################
 
-class BookLessonForm(FlaskForm):
-    name = StringField('Your name', [InputRequired()])
-    phone = StringField('Your phone', [InputRequired()])
-    submit = SubmitField()
+# class BookLessonForm(FlaskForm):
+#     name = StringField('Your name', [InputRequired()])
+#     phone = StringField('Your phone', [InputRequired()])
+#     submit = SubmitField()
 
 
-class ApplySelectionForm(FlaskForm):
-    comment_txt = StringField('Type request here:', [InputRequired()])
-    submit = SubmitField('Request tutor search')
+# class ApplySelectionForm(FlaskForm):
+#     comment_txt = StringField('Type request here:', [InputRequired()])
+#     submit = SubmitField('Request tutor search')
 
 ######################################
 
