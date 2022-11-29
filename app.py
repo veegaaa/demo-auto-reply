@@ -39,7 +39,7 @@ with open('utils/labels.json') as json_file:
     labels_d = {int(k): v for k, v in labels_d.items()}
 
 PROD_MODEL_PATH = 'production_models/mvp_model_pipeline_v2.pkl'
-model_pipe = joblib.load(PROD_MODEL_PATH)
+# model_pipe = joblib.load(PROD_MODEL_PATH)
 
 # class Tutor(db.Model):
 #     __tablename__ = "tutors"
