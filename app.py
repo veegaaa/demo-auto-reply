@@ -19,7 +19,6 @@ from sklearn.pipeline import Pipeline
 from utils import data_preproc
 from utils.dediac import dediac_ar
 import numpy as np
-import pandas as pd
 import json
 from typing import Dict, Optional
 import joblib
